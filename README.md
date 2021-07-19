@@ -14,4 +14,5 @@ You can install it with `pip install dotstree`. To see basic usage info, try `do
 
 Further reading:
 * [Details](doc/details.md)
+* [Program-specific tips](doc/howto.md)
 * [Why not GNU Stow?](doc/why-not-gnu-stow.md)
