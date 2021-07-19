@@ -93,10 +93,13 @@ def install_specs(all_specs):
             for ln in spec.get("symlinks"):
                 origin = Path(ln["from"]).expanduser()
                 target = Path(ln["to"])
-                if not check_symlink(Path(origin), Path(target)):
-                    origin.parent.mkdir(parents=True, exist_ok=True)
-                    log.debug(f"Symlinking {origin} to {target}")
-                    origin.symlink_to(target)
+                if check_symlink(Path(origin), Path(target)):
+                    log.debug(f"Skipping {origin} because it already points to {target}")
+                    continue
+
+                origin.parent.mkdir(parents=True, exist_ok=True)
+                log.debug(f"Symlinking {origin} to {target}")
+                origin.symlink_to(target)
 
         if "install" in spec:
             if "check" in spec:
