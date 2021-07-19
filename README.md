@@ -1,7 +1,7 @@
 # Dotfiles manager based on directory trees
 Dotstree is a dotfiles manager. "Another one??" I know, right. Here's the highlights:
 
-* The dotfiles are symlinked
+* The dotfiles are replaced with symlinks
 * Every program's deployment spec is stored in its own folder
 * Install commands can be part of the deployment
 * You can cherrypick which programs to deploy based on which directory trees you pass to dotstree (hence the name)
