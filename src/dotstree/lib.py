@@ -96,7 +96,7 @@ def combine_spec_trees(paths: List[Path]):
     raise NotImplementedError()
 
 
-def check_symlink(origin: Path, target: Path):
+def symlink_is_correct(origin: Path, target: Path):
     """True iff symlink exists at origin and points to destination."""
 
     if not origin.is_symlink():
