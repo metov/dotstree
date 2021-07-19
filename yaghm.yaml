@@ -1,0 +1,9 @@
+# Git hook spec for use with https://github.com/metov/yaghm
+pre-commit:
+  # Enforce code style
+  - enable: black --check .
+    install: pip install black
+
+  # Require incrementing version in feature branches
+  - enable: require_version_bump master setup.py
+    install: pip install metovhooks
