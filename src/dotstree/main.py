@@ -18,8 +18,8 @@ from pathlib import Path
 from time import time
 
 from docopt import docopt
-from dotstree import log
-from dotstree.lib import load_spec_tree, check_symlink, run_command
+from . import log
+from .lib import load_spec_tree, symlink_is_correct, run_command
 from tabulate import tabulate
 from tqdm import tqdm
 
@@ -57,7 +57,7 @@ def check_specs(all_specs):
             for ln in spec.get("symlinks"):
                 origin = Path(ln["from"]).expanduser()
                 target = Path(ln["to"])
-                if not check_symlink(Path(origin), Path(target)):
+                if not symlink_is_correct(Path(origin), Path(target)):
                     res["Symlinks"] = "🔴"
 
         t2 = time()
@@ -93,14 +93,22 @@ def install_specs(all_specs):
             for ln in spec.get("symlinks"):
                 origin = Path(ln["from"]).expanduser()
                 target = Path(ln["to"])
-                if not check_symlink(Path(origin), Path(target)):
-                    origin.parent.mkdir(parents=True, exist_ok=True)
-                    log.debug(f"Symlinking {origin} to {target}")
-                    origin.symlink_to(target)
+                if symlink_is_correct(Path(origin), Path(target)):
+                    log.debug(
+                        f"Skipping {origin} because it already points to {target}"
+                    )
+                    continue
+
+                if origin.exists() or origin.is_symlink():
+                    log.error(f"Unexpected file at {origin} - remove it and try again.")
+                    continue
+
+                origin.parent.mkdir(parents=True, exist_ok=True)
+                log.debug(f"Symlinking {origin} to {target}")
+                origin.symlink_to(target)
 
         if "install" in spec:
             if "check" in spec:
-
                 result = run_command("pwd", spec["path"].absolute())
                 print(result.stdout.decode())
 

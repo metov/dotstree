@@ -96,14 +96,11 @@ def combine_spec_trees(paths: List[Path]):
     raise NotImplementedError()
 
 
-def check_symlink(origin: Path, target: Path):
+def symlink_is_correct(origin: Path, target: Path):
     """True iff symlink exists at origin and points to destination."""
-    if not origin.exists():
-        log.debug(f"{origin} doesn't exist.")
-        return False
 
     if not origin.is_symlink():
-        log.debug(f"{origin} is not a symlink.")
+        log.debug(f"Not a symlink: {origin}")
         return False
 
     # There is a Path.readlink, but unfortunately Python >=3.9 only :(
