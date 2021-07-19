@@ -101,7 +101,7 @@ def install_specs(all_specs):
 
                 if origin.exists() or origin.is_symlink():
                     log.error(f"Unexpected file at {origin} - remove it and try again.")
-                    exit(1)
+                    continue
 
                 origin.parent.mkdir(parents=True, exist_ok=True)
                 log.debug(f"Symlinking {origin} to {target}")
