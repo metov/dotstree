@@ -4,6 +4,21 @@ For most programs, using dotstree should be straightforward. That's the point! ð
 Occasionally, you get quirky programs that have a convoluted way of storing configuration. This page has some tips for known cases.
 
 ## Linux
+### Kitty
+[Kitty](https://github.com/kovidgoyal/kitty) has the nice feature of allowing [includes in its config](https://sw.kovidgoyal.net/kitty/conf/). The include will not work if you symlink just `kitty.conf`, as kitty will look for includes relative to the symlink, not the symlink target. Instead you should symlink the entire kitty dir:
+```
+symlinks:
+  # This breaks includes, don't do it!
+  #- from: ~/.config/kitty/kitty.conf
+  #  to: dots/kitty.conf
+
+  # Symlink entire dir so that includes work
+  - from: ~/.config/kitty
+    to: ./dots
+```
+
+Now `include colors.conf` in `dots/kitty.conf` will correctly load `dots/colors.conf`.
+
 ### Cinnamon
 Cinnamon uses a [complex configuration system](https://wiki.archlinux.org/title/Cinnamon#Configuration) and it's not practical to simply symlink the underlying files. Instead, you can dump the config into a file and version that.
 
