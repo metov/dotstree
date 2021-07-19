@@ -100,7 +100,6 @@ def install_specs(all_specs):
 
         if "install" in spec:
             if "check" in spec:
-
                 result = run_command("pwd", spec["path"].absolute())
                 print(result.stdout.decode())
 
