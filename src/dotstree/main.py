@@ -94,7 +94,9 @@ def install_specs(all_specs):
                 origin = Path(ln["from"]).expanduser()
                 target = Path(ln["to"])
                 if symlink_is_correct(Path(origin), Path(target)):
-                    log.debug(f"Skipping {origin} because it already points to {target}")
+                    log.debug(
+                        f"Skipping {origin} because it already points to {target}"
+                    )
                     continue
 
                 if origin.exists() or origin.is_symlink():
