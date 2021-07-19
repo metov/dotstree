@@ -18,8 +18,8 @@ from pathlib import Path
 from time import time
 
 from docopt import docopt
-from dotstree import log
-from dotstree.lib import load_spec_tree, check_symlink, run_command
+from . import log
+from .lib import load_spec_tree, check_symlink, run_command
 from tabulate import tabulate
 from tqdm import tqdm
 
