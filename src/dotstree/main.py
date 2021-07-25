@@ -91,21 +91,7 @@ def install_specs(all_specs):
     for name, spec in tqdm(all_specs.items()):
         if "symlinks" in spec:
             for ln in spec.get("symlinks"):
-                origin = Path(ln["from"]).expanduser()
-                target = Path(ln["to"])
-                if symlink_is_correct(Path(origin), Path(target)):
-                    log.debug(
-                        f"Skipping {origin} because it already points to {target}"
-                    )
-                    continue
-
-                if origin.exists() or origin.is_symlink():
-                    log.error(f"Unexpected file at {origin} - remove it and try again.")
-                    continue
-
-                origin.parent.mkdir(parents=True, exist_ok=True)
-                log.debug(f"Symlinking {origin} to {target}")
-                origin.symlink_to(target)
+                install_symlink(Path(ln["from"]).expanduser(), Path(ln["to"]))
 
         if "install" in spec:
             if "check" in spec:
@@ -123,3 +109,17 @@ def install_specs(all_specs):
             if res.returncode != 0:
                 msg = res.stderr.decode() if res.stderr else str(res.stderr)
                 log.error(f"{spec['install']} failed with:\n{msg}")
+
+
+def install_symlink(origin: Path, target: Path):
+    if symlink_is_correct(origin, target):
+        log.debug(f"Skipping {origin} because it already points to {target}")
+        return
+
+    if origin.exists() or origin.is_symlink():
+        log.error(f"Unexpected file at {origin} - remove it and try again.")
+        return
+
+    origin.parent.mkdir(parents=True, exist_ok=True)
+    log.debug(f"Symlinking {origin} to {target}")
+    origin.symlink_to(target)
