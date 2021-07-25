@@ -16,12 +16,14 @@ import logging
 from operator import itemgetter
 from pathlib import Path
 from time import time
-
+import shutil
+import os
 from docopt import docopt
 from . import log
 from .lib import load_spec_tree, symlink_is_correct, run_command
 from tabulate import tabulate
 from tqdm import tqdm
+import questionary as q
 
 
 def main():
@@ -111,15 +113,40 @@ def install_specs(all_specs):
                 log.error(f"{spec['install']} failed with:\n{msg}")
 
 
-def install_symlink(origin: Path, target: Path):
+def install_symlink(origin, target):
     if symlink_is_correct(origin, target):
         log.debug(f"Skipping {origin} because it already points to {target}")
         return
 
-    if origin.exists() or origin.is_symlink():
-        log.error(f"Unexpected file at {origin} - remove it and try again.")
+    if symlink_exists(origin) or file_exists(origin, target):
+        log.debug(f"Skipping {origin}")
         return
 
     origin.parent.mkdir(parents=True, exist_ok=True)
     log.debug(f"Symlinking {origin} to {target}")
     origin.symlink_to(target)
+
+
+def symlink_exists(origin):
+    if origin.is_symlink():
+        target = os.readlink(origin)
+        log.warning(f"Origin exists, but points to {target}.")
+        if q.confirm(f"Replace {origin}?", default=True).ask():
+            log.info(f"Removing {origin}")
+            origin.unlink()
+        else:
+            log.error(f"A symlink already exists at {origin} and points to {target}")
+            return True
+    return False
+
+
+def file_exists(origin, target):
+    if origin.exists():
+        log.warning(f"File exists at {origin}")
+        if q.confirm(f"Move {origin} to {target}?", default=True).ask():
+            log.info(f"Moving {origin} to {target}")
+            shutil.move(origin, target)
+        else:
+            log.error(f"A file already exists at {origin}")
+            return True
+    return False
