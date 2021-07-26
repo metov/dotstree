@@ -12,7 +12,10 @@ Dotstree is a dotfiles manager. "Another one??" I know, right. Here's the highli
 ## Usage
 You can install it with `pip install dotstree`. To see basic usage info, try `dots --help`. I can provide a [`tldr`](https://github.com/tldr-pages/tldr) page if there's interest - just open an issue. Your dotfiles specs are expected to be in some kind of directory tree that you pass to dotstree. Normally this would be a git repo - but dotstree doesn't care. 
 
-Further reading:
+## Tests
+Run `pytest .` in the repo root.
+
+## Further reading
 * [Details](doc/details.md)
 * [Program-specific tips](doc/howto.md)
 * [Why not GNU Stow?](doc/why-not-gnu-stow.md)
