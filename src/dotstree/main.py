@@ -19,11 +19,14 @@ from time import time
 import shutil
 import os
 from docopt import docopt
-from . import log
 from .lib import load_spec_tree, symlink_is_correct, run_command
 from tabulate import tabulate
 from tqdm import tqdm
 import questionary as q
+
+from metovlogs import get_log
+
+log = get_log(__name__)
 
 
 def main():

@@ -17,6 +17,7 @@ setup(
     install_requires=[
         "coloredlogs",
         "docopt",
+        "metovlogs",
         "PyYAML",
         "questionary",
         "tabulate",
