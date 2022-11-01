@@ -1,6 +1,8 @@
 import os
-from dotstree.main import install_symlink, q
+
 from pytest import fixture
+
+from dotstree.main import install_symlink, q
 
 
 def mock_answer(monkeypatch, result):

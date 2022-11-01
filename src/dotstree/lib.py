@@ -4,7 +4,9 @@ from pathlib import Path
 from typing import List
 
 import yaml
-from dotstree import log
+from metovlogs import get_log
+
+log = get_log(__name__)
 
 SPEC_FILENAMES = ["spec.yaml", "spec.yml"]
 
