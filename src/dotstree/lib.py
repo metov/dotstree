@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import List
 
 import yaml
-
 from metovlogs import get_log
 
 log = get_log(__name__)

@@ -13,18 +13,19 @@ Options:
     --log LEVEL  Minimum level of logs to print [default: INFO]
 """
 import logging
+import os
+import shutil
 from operator import itemgetter
 from pathlib import Path
 from time import time
-import shutil
-import os
+
+import questionary as q
 from docopt import docopt
-from .lib import load_spec_tree, symlink_is_correct, run_command
+from metovlogs import get_log
 from tabulate import tabulate
 from tqdm import tqdm
-import questionary as q
 
-from metovlogs import get_log
+from .lib import load_spec_tree, run_command, symlink_is_correct
 
 log = get_log(__name__)
 
