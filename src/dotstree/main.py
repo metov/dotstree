@@ -75,7 +75,9 @@ def check_specs(all_specs):
                 res["Program"] = "🟢"
             else:
                 res["Program"] = "🔴"
-                log.info(result)
+                msg = f"Command: {spec['check']}"
+                log.info(msg + f"\nStandard error:\n{result.stderr.decode()}")
+                log.debug(f"Standard output:\n{result.stdout.decode()}")
 
         t3 = time()
 
