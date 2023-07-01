@@ -66,15 +66,7 @@ def check_specs(all_specs):
         res = {"Layer": layer, "Spec": spec_name}
 
         t1 = time()
-        symlink_status = None
-        if "symlinks" in spec:
-            symlink_status = True
-            for ln in spec.get("symlinks"):
-                origin = Path(ln["from"]).expanduser()
-                target = Path(ln["to"])
-                if not symlink_is_correct(Path(origin), Path(target)):
-                    symlink_status = False
-        res["Symlinks"] = status_icon(symlink_status)
+        res["Symlinks"] = status_icon(check_symlinks_status(spec))
 
         t2 = time()
         res["Program"] = status_icon(check_program_status(spec))
@@ -93,6 +85,20 @@ def check_specs(all_specs):
     status.sort(key=itemgetter("Layer"))
     status.sort(key=lambda d: d["Layer"] != "")
     print(tabulate(status, headers="keys", floatfmt=".3f"))
+
+
+def check_symlinks_status(spec: dict) -> bool | None:
+    # TODO: should also check for empty symlinks (will need test)
+    if "symlinks" not in spec:
+        return None
+
+    for ln in spec.get("symlinks"):
+        origin = Path(ln["from"]).expanduser()
+        target = Path(ln["to"])
+        if not symlink_is_correct(Path(origin), Path(target)):
+            return False
+
+    return True
 
 
 def check_program_status(spec: dict) -> bool | None:
