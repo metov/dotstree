@@ -49,6 +49,16 @@ def main():
         log.critical("Unexpected arguments")
 
 
+def status_icon(status: bool | None) -> str:
+    if status:
+        return "🟢"
+
+    if status == False:
+        return "🔴"
+
+    return "⚪"
+
+
 def check_specs(all_specs):
     status = []
     for name, spec in tqdm(all_specs.items()):
