@@ -66,27 +66,28 @@ def check_specs(all_specs):
         res = {"Layer": layer, "Spec": spec_name}
 
         t1 = time()
-        res["Symlinks"] = "⚪"
+        symlink_status = None
         if "symlinks" in spec:
-            res["Symlinks"] = "🟢"
+            symlink_status = True
             for ln in spec.get("symlinks"):
                 origin = Path(ln["from"]).expanduser()
                 target = Path(ln["to"])
                 if not symlink_is_correct(Path(origin), Path(target)):
-                    res["Symlinks"] = "🔴"
+                    symlink_status = False
+        res["Symlinks"] = status_icon(symlink_status)
 
         t2 = time()
-
-        res["Program"] = "⚪"
+        program_status = None
         if "check" in spec:
             result = run_command(spec["check"], spec["path"])
             if result.returncode == 0:
-                res["Program"] = "🟢"
+                program_status = True
             else:
-                res["Program"] = "🔴"
+                program_status = False
                 msg = f"Command: {spec['check']}"
                 log.info(msg + f"\nStandard error:\n{result.stderr}")
                 log.debug(f"Standard output:\n{result.stdout}")
+        res["Program"] = status_icon(program_status)
 
         t3 = time()
 
