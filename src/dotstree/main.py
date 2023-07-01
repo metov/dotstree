@@ -91,6 +91,8 @@ def check_symlinks_status(spec: dict) -> bool | None:
     if "symlinks" not in spec:
         return None
 
+    # Note that an empty symlinks block is always "correct"
+
     for ln in spec["symlinks"]:
         origin = Path(ln["from"]).expanduser()
         target = Path(ln["to"])
