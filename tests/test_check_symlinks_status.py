@@ -9,20 +9,23 @@ def mock_symlink_is_correct(monkeypatch, results):
     m = Mock(side_effect=results)
     monkeypatch.setattr(main, "symlink_is_correct", m)
 
+    symlinks = [{"from": "mock/from", "to": "mock/to"}] * len(results)
+    return {"symlinks": symlinks}
+
 
 @fixture
 def correct_symlink(monkeypatch):
-    mock_symlink_is_correct(monkeypatch, [True])
+    return mock_symlink_is_correct(monkeypatch, [True])
 
 
 @fixture
 def wrong_symlink(monkeypatch):
-    mock_symlink_is_correct(monkeypatch, [False])
+    return mock_symlink_is_correct(monkeypatch, [False])
 
 
 @fixture
 def mixed_symlinks(monkeypatch):
-    mock_symlink_is_correct(monkeypatch, [True, False])
+    return mock_symlink_is_correct(monkeypatch, [True, False])
 
 
 def test_no_symlinks():
@@ -38,23 +41,15 @@ def test_empty_symlinks():
 
 
 def test_correct_symlink(correct_symlink):
-    spec = {"symlinks": [{"from": "mock/from", "to": "mock/to"}]}
-    status = check_symlinks_status(spec)
+    status = check_symlinks_status(correct_symlink)
     assert status == True
 
 
 def test_wrong_symlink(wrong_symlink):
-    spec = {"symlinks": [{"from": "mock/from", "to": "mock/to"}]}
-    status = check_symlinks_status(spec)
+    status = check_symlinks_status(wrong_symlink)
     assert status == False
 
 
 def test_mixed_symlink(mixed_symlinks):
-    spec = {
-        "symlinks": [
-            {"from": "mock/from", "to": "mock/to"},
-            {"from": "mock/from", "to": "mock/to"},
-        ]
-    }
-    status = check_symlinks_status(spec)
+    status = check_symlinks_status(mixed_symlinks)
     assert status == False
