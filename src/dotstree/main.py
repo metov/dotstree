@@ -52,7 +52,6 @@ def main():
 def check_specs(all_specs):
     status = []
     for name, spec in tqdm(all_specs.items()):
-
         layer, _, spec_name = name.rpartition("/")
         res = {"Layer": layer, "Spec": spec_name}
 
@@ -76,8 +75,8 @@ def check_specs(all_specs):
             else:
                 res["Program"] = "🔴"
                 msg = f"Command: {spec['check']}"
-                log.info(msg + f"\nStandard error:\n{result.stderr.decode()}")
-                log.debug(f"Standard output:\n{result.stdout.decode()}")
+                log.info(msg + f"\nStandard error:\n{result.stderr}")
+                log.debug(f"Standard output:\n{result.stdout}")
 
         t3 = time()
 
@@ -104,7 +103,7 @@ def install_specs(all_specs):
         if "install" in spec:
             if "check" in spec:
                 result = run_command("pwd", spec["path"].absolute())
-                print(result.stdout.decode())
+                print(result.stdout)
 
                 result = run_command(spec["check"], spec["path"])
                 if result.returncode == 0:
@@ -113,9 +112,11 @@ def install_specs(all_specs):
 
             log.info(f"Installing {name}")
             install_cmd = spec["install"]
-            res = run_command(install_cmd, spec["path"], capture_output=False)
+            res = run_command(install_cmd, spec["path"], capture_output=True)
+            log.debug(f"Output from command:\n{res.stdout}")
+
             if res.returncode != 0:
-                msg = res.stderr.decode() if res.stderr else str(res.stderr)
+                msg = res.stderr if res.stderr else str(res.stderr)
                 log.error(f"{spec['install']} failed with:\n{msg}")
 
 
