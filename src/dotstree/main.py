@@ -88,11 +88,10 @@ def check_specs(all_specs):
 
 
 def check_symlinks_status(spec: dict) -> bool | None:
-    # TODO: should also check for empty symlinks (will need test)
     if "symlinks" not in spec:
         return None
 
-    for ln in spec.get("symlinks"):
+    for ln in spec["symlinks"]:
         origin = Path(ln["from"]).expanduser()
         target = Path(ln["to"])
         if not symlink_is_correct(Path(origin), Path(target)):
