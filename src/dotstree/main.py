@@ -112,7 +112,9 @@ def install_specs(all_specs):
 
             log.info(f"Installing {name}")
             install_cmd = spec["install"]
-            res = run_command(install_cmd, spec["path"], capture_output=False)
+            res = run_command(install_cmd, spec["path"], capture_output=True)
+            log.debug(f"Output from command:\n{res.stdout}")
+
             if res.returncode != 0:
                 msg = res.stderr if res.stderr else str(res.stderr)
                 log.error(f"{spec['install']} failed with:\n{msg}")
