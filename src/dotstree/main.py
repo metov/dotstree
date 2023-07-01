@@ -49,6 +49,16 @@ def main():
         log.critical("Unexpected arguments")
 
 
+def status_icon(status: bool | None) -> str:
+    if status:
+        return "🟢"
+
+    if status == False:
+        return "🔴"
+
+    return "⚪"
+
+
 def check_specs(all_specs):
     status = []
     for name, spec in tqdm(all_specs.items()):
@@ -56,27 +66,10 @@ def check_specs(all_specs):
         res = {"Layer": layer, "Spec": spec_name}
 
         t1 = time()
-        res["Symlinks"] = "⚪"
-        if "symlinks" in spec:
-            res["Symlinks"] = "🟢"
-            for ln in spec.get("symlinks"):
-                origin = Path(ln["from"]).expanduser()
-                target = Path(ln["to"])
-                if not symlink_is_correct(Path(origin), Path(target)):
-                    res["Symlinks"] = "🔴"
+        res["Symlinks"] = status_icon(check_symlinks_status(spec))
 
         t2 = time()
-
-        res["Program"] = "⚪"
-        if "check" in spec:
-            result = run_command(spec["check"], spec["path"])
-            if result.returncode == 0:
-                res["Program"] = "🟢"
-            else:
-                res["Program"] = "🔴"
-                msg = f"Command: {spec['check']}"
-                log.info(msg + f"\nStandard error:\n{result.stderr}")
-                log.debug(f"Standard output:\n{result.stdout}")
+        res["Program"] = status_icon(check_program_status(spec))
 
         t3 = time()
 
@@ -92,6 +85,35 @@ def check_specs(all_specs):
     status.sort(key=itemgetter("Layer"))
     status.sort(key=lambda d: d["Layer"] != "")
     print(tabulate(status, headers="keys", floatfmt=".3f"))
+
+
+def check_symlinks_status(spec: dict) -> bool | None:
+    if "symlinks" not in spec:
+        return None
+
+    # Note that an empty symlinks block is always "correct"
+
+    for ln in spec["symlinks"]:
+        origin = Path(ln["from"]).expanduser()
+        target = Path(ln["to"])
+        if not symlink_is_correct(Path(origin), Path(target)):
+            return False
+
+    return True
+
+
+def check_program_status(spec: dict) -> bool | None:
+    if "check" not in spec:
+        return None
+
+    result = run_command(spec["check"], spec["path"])
+    if result.returncode == 0:
+        return True
+
+    msg = f"Command: {spec['check']}"
+    log.debug(f"Standard output:\n{result.stdout}")
+    log.info(msg + f"\nStandard error:\n{result.stderr}")
+    return False
 
 
 def install_specs(all_specs):
