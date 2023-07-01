@@ -77,17 +77,7 @@ def check_specs(all_specs):
         res["Symlinks"] = status_icon(symlink_status)
 
         t2 = time()
-        program_status = None
-        if "check" in spec:
-            result = run_command(spec["check"], spec["path"])
-            if result.returncode == 0:
-                program_status = True
-            else:
-                program_status = False
-                msg = f"Command: {spec['check']}"
-                log.info(msg + f"\nStandard error:\n{result.stderr}")
-                log.debug(f"Standard output:\n{result.stdout}")
-        res["Program"] = status_icon(program_status)
+        res["Program"] = status_icon(check_program_status(spec))
 
         t3 = time()
 
@@ -103,6 +93,20 @@ def check_specs(all_specs):
     status.sort(key=itemgetter("Layer"))
     status.sort(key=lambda d: d["Layer"] != "")
     print(tabulate(status, headers="keys", floatfmt=".3f"))
+
+
+def check_program_status(spec: dict) -> bool | None:
+    if "check" not in spec:
+        return None
+
+    result = run_command(spec["check"], spec["path"])
+    if result.returncode == 0:
+        return True
+
+    msg = f"Command: {spec['check']}"
+    log.debug(f"Standard output:\n{result.stdout}")
+    log.info(msg + f"\nStandard error:\n{result.stderr}")
+    return False
 
 
 def install_specs(all_specs):
