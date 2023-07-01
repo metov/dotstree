@@ -120,4 +120,10 @@ def symlink_is_correct(origin: Path, target: Path):
 
 def run_command(cmd, workdir, capture_output=True):
     log.debug(f"Running {cmd}")
-    return subprocess.run(cmd, shell=True, capture_output=capture_output, cwd=workdir)
+    return subprocess.run(
+        cmd,
+        shell=True,
+        capture_output=capture_output,
+        cwd=workdir,
+        text=True,
+    )
